@@ -503,6 +503,21 @@
     [self.launchWindow makeKeyAndVisible];
     [self.launchWindow makeKeyWindow];
 }
+
+-(void)application:(UIApplication *)arg1 didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken{
+    NSUInteger dataLength = deviceToken.length;
+    if (dataLength == 0) {
+        return;
+    }
+    const unsigned char *dataBuffer = (const unsigned char *)deviceToken.bytes;
+    NSMutableString *hexTokenString  = [NSMutableString stringWithCapacity:(dataLength * 2)];
+    for (int i = 0; i < dataLength; ++i) {
+        [hexTokenString appendFormat:@"%02x", dataBuffer[i]];
+    }
+    UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
+    pasteboard.string = hexTokenString;
+    %orig;
+}
 %end
 
 %hook MMMainSceneDelegate
